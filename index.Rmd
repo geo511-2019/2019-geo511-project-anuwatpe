@@ -1,6 +1,6 @@
 ---
-title: "I have the best titles"
-author: Anuwat Pengput
+title: "Opoid-Related Deaths in New York State"
+author: "Anuwat Pengput"
 subtitle: Subtitle here if desired
 ---
 
