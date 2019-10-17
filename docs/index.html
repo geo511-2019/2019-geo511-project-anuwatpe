@@ -440,172 +440,172 @@ value
 <tbody>
 <tr>
 <td style="text-align:center;">
--175.18
+86.70
 </td>
 <td style="text-align:center;">
--15.00
+54.34
 </td>
 <td style="text-align:center;">
-7.00
+18.96
 </td>
 <td style="text-align:center;">
 e
 </td>
 <td style="text-align:center;">
-0.00
+0.14
 </td>
 </tr>
 <tr>
 <td style="text-align:center;">
--156.19
+-75.63
 </td>
 <td style="text-align:center;">
--14.14
+33.03
 </td>
 <td style="text-align:center;">
-5.67
-</td>
-<td style="text-align:center;">
-a
-</td>
-<td style="text-align:center;">
-2.29
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-20.87
-</td>
-<td style="text-align:center;">
--47.94
-</td>
-<td style="text-align:center;">
-18.75
-</td>
-<td style="text-align:center;">
-a
-</td>
-<td style="text-align:center;">
--1.37
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-97.13
-</td>
-<td style="text-align:center;">
-23.22
-</td>
-<td style="text-align:center;">
-10.47
+19.28
 </td>
 <td style="text-align:center;">
 d
 </td>
 <td style="text-align:center;">
--0.13
+-0.12
 </td>
 </tr>
 <tr>
 <td style="text-align:center;">
--100.23
+3.02
 </td>
 <td style="text-align:center;">
-12.01
+35.01
 </td>
 <td style="text-align:center;">
-5.14
+11.72
 </td>
 <td style="text-align:center;">
 c
 </td>
 <td style="text-align:center;">
--3.00
+0.15
 </td>
 </tr>
 <tr>
 <td style="text-align:center;">
-121.34
+-85.69
 </td>
 <td style="text-align:center;">
-59.66
+-10.09
 </td>
 <td style="text-align:center;">
-18.39
+15.68
 </td>
 <td style="text-align:center;">
 e
 </td>
 <td style="text-align:center;">
-1.97
+-1.11
 </td>
 </tr>
 <tr>
 <td style="text-align:center;">
-66.38
+111.20
 </td>
 <td style="text-align:center;">
--18.73
+23.83
 </td>
 <td style="text-align:center;">
-9.35
+7.04
+</td>
+<td style="text-align:center;">
+c
+</td>
+<td style="text-align:center;">
+-0.74
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+-172.02
+</td>
+<td style="text-align:center;">
+54.32
+</td>
+<td style="text-align:center;">
+11.18
 </td>
 <td style="text-align:center;">
 d
 </td>
 <td style="text-align:center;">
-0.68
+1.22
 </td>
 </tr>
 <tr>
 <td style="text-align:center;">
--145.81
+-5.90
 </td>
 <td style="text-align:center;">
--46.56
+0.42
 </td>
 <td style="text-align:center;">
-11.57
+8.03
 </td>
 <td style="text-align:center;">
 b
 </td>
 <td style="text-align:center;">
--0.34
+0.91
 </td>
 </tr>
 <tr>
 <td style="text-align:center;">
-159.17
+-0.94
 </td>
 <td style="text-align:center;">
-48.53
+45.24
 </td>
 <td style="text-align:center;">
-14.99
+11.11
+</td>
+<td style="text-align:center;">
+d
+</td>
+<td style="text-align:center;">
+-0.47
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+-128.88
+</td>
+<td style="text-align:center;">
+-50.19
+</td>
+<td style="text-align:center;">
+10.91
 </td>
 <td style="text-align:center;">
 b
 </td>
 <td style="text-align:center;">
--2.23
+-1.93
 </td>
 </tr>
 <tr>
 <td style="text-align:center;">
--129.10
+167.94
 </td>
 <td style="text-align:center;">
--59.74
+-25.08
 </td>
 <td style="text-align:center;">
-18.91
+11.43
 </td>
 <td style="text-align:center;">
-b
+d
 </td>
 <td style="text-align:center;">
--0.35
+0.80
 </td>
 </tr>
 </tbody>
@@ -618,11 +618,12 @@ b
 <p>Show tables, plots, etc. and describe them.</p>
 <pre class="r"><code>m &lt;- leaflet(data) %&gt;% 
   addTiles() %&gt;% 
-  addCircleMarkers(~x, ~y, radius = ~size,color=~category)
+  addCircleMarkers(~x, ~y, radius = ~size,color = ~as.factor(category)) %&gt;% 
+  addPopups(~x[2], ~y[2], &quot;Random popup&quot;)
 m  # a map with the default OSM tile layer</code></pre>
 <div class="figure">
-<div id="htmlwidget-6c3e8e4b364322b4c717" style="width:576px;height:288px;" class="leaflet html-widget"></div>
-<script type="application/json" data-for="htmlwidget-6c3e8e4b364322b4c717">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]},{"method":"addCircleMarkers","args":[[-14.9990496318787,-14.1425578482449,-47.937785955146,23.2246373500675,12.0140750147402,59.6565782558173,-18.734748121351,-46.5595482755452,48.5311427805573,-59.7428968548775,-45.8097747992724,-17.9679116047919,11.8715448305011,37.8119112364948,-0.509222522377968,47.7842772938311,23.233160879463,-49.0173826832324,36.4987395331264,41.0007195733488],[-175.181908300146,-156.191962519661,20.8724004495889,97.1336986497045,-100.227176304907,121.344821602106,66.3847352284938,-145.814246395603,159.173704627901,-129.102302407846,68.3534577861428,5.6629135273397,115.466055460274,95.05245834589,107.708545736969,171.813281765208,154.443794991821,-43.0141758453101,-143.19836916402,86.8726778123528],[6.99775445973501,5.67242127144709,18.7510148261208,10.4654943244532,5.14062191476114,18.3901090046857,9.35100446688011,11.5656995680183,14.9926926929038,18.9147341717035,19.1231192438863,17.9559715325013,5.70121329394169,9.68357505858876,17.2650242608506,9.21331325662322,7.71976947551593,9.28765372140333,16.8878742691595,13.8479006558191],null,null,{"interactive":true,"className":"","stroke":true,"color":["e","a","a","d","c","e","d","b","b","b","a","e","b","e","e","a","b","c","d","a"],"weight":5,"opacity":0.5,"fill":true,"fillColor":["e","a","a","d","c","e","d","b","b","b","a","e","b","e","e","a","b","c","d","a"],"fillOpacity":0.2},null,null,null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]}],"limits":{"lat":[-59.7428968548775,59.6565782558173],"lng":[-175.181908300146,171.813281765208]}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-915746a7e1b9362f1899" style="width:576px;height:288px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-915746a7e1b9362f1899">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]},{"method":"addCircleMarkers","args":[[54.3395855370909,33.0323229823261,35.0090814940631,-10.0927929393947,23.8287611491978,54.3178640026599,0.423402171581984,45.2412475179881,-50.1901574246585,-25.0753615703434,55.1932372525334,45.1272739470005,-5.32478668726981,34.6777669899166,0.767757659777999,6.0125241894275,-11.9135859142989,-18.0011245887727,0.594164477661252,43.4550909698009],[86.6953185014427,-75.6299755163491,3.01813297905028,-85.6907204166055,111.203807238489,-172.015685616061,-5.90003035962582,-0.935706133022904,-128.881121501327,167.943191863596,-65.3937538806349,-148.439866499975,77.6582220755517,-135.558154871687,-100.567361125723,133.855197988451,-81.3618238270283,118.3788571693,125.473693460226,-176.488680616021],[18.9556660747621,19.2765241512097,11.7203709948808,15.6816499156412,7.03844956005923,11.1792386195157,8.02874115412124,11.1140879511368,10.905483084498,11.4310531085357,11.1466585495509,6.6641358891502,12.8008391335607,6.01090144715272,5.46009150100872,17.6288696750998,5.04077242338099,11.9281678041443,5.10136951808818,10.4381230799481],null,null,{"interactive":true,"className":"","stroke":true,"color":["e","d","c","e","c","d","b","d","b","d","c","e","a","c","c","b","a","e","a","b"],"weight":5,"opacity":0.5,"fill":true,"fillColor":["e","d","c","e","c","d","b","d","b","d","c","e","a","c","c","b","a","e","a","b"],"fillOpacity":0.2},null,null,null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]},{"method":"addPopups","args":[33.0323229823261,-75.6299755163491,"Random popup",null,null,{"maxWidth":300,"minWidth":50,"autoPan":true,"keepInView":false,"closeButton":true,"className":""}]}],"limits":{"lat":[-50.1901574246585,55.1932372525334],"lng":[-176.488680616021,167.943191863596]}},"evals":[],"jsHooks":[]}</script>
 <p class="caption">
 Map of completely random data
 </p>
