@@ -1,7 +1,7 @@
 ---
 title: "Opoid-Related Deaths in New York State"
 author: "Anuwat Pengput"
-subtitle: Subtitle here if desired
+subtitle: "Spatial Epidemiological Analysis and Risk Factors of Opoid-Related Deathsin New York"
 ---
 
 # Introduction
