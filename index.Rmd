@@ -5,7 +5,7 @@ subtitle: "Spatial Epidemiological Analysis and Risk Factors of Opoid-Related De
 ---
 
 # Introduction
-My really awesome and complete introduction will go here.  
+Opioid analgesics are pain relievers derived from opium or have an opium-like activity. There are no better drugs than opioids for treating severe pain and suffering, however, opioids are the main drugs associated with overdose deaths. Opioid prescription rates have increased almost threefold associated with an increase of opioid related overdoses and deaths in the last 15 years. New York has been greatly impacted by the opioid epidemic. The rate of deaths related to any opioid in New York has increased by 210% from 2010 to 2016. The opioid overdose death rate in the overall state was 18 deaths per 100,000 residents, which was higher than many states in the United States.  
 
 # Materials and methods
 
@@ -35,21 +35,33 @@ Load any required packages in a code chunk (you may need to install some package
 
 ```{r, message=F, warning=F}
 library(tidyverse)
+library(tidycensus)
 library(leaflet)
-library(kableExtra)
+
+
 knitr::opts_chunk$set(cache=TRUE)  # cache the results for quick compiling
 ```
 
 ## Download and clean all required data
 ```{r}
-n=20
-data=data.frame(x=runif(n,-180,180),
-                y=runif(n,-60,60),
-                size = runif(n, 5, 20),
-                category = factor(
-                  sample(letters[1:5], n, replace = TRUE)
-                  ),
-                value = rnorm(n))
+
+NY <- get_acs(geography = "county", 
+              variables = c(medincome = "B19013_001"), 
+              state = "NY")
+str(NY)
+head(NY)
+NY %>%
+  mutate(NAME = gsub(" County, New York ", "", NAME)) %>%
+  left_join(vital, c("County" = "NAME")) +
+  ggplot(aes(x = estimate, y = reorder(NAME, estimate))) +
+  geom_errorbarh(aes(xmin = estimate - moe, xmax = estimate + moe)) +
+  geom_point(color = "red", size = 3) +
+  labs(title = "Household income by county in New York",
+       subtitle = "2013-2017 American Community Survey",
+       y = "",
+       x = "ACS estimate (bars represent margin of error)")
+
+
 ```
 
 ```{r, results='asis'}
@@ -58,6 +70,18 @@ data %>%
   kable(digits=2,align="c")%>% #make table and round to two digits
   kable_styling(bootstrap_options = 
                   c("striped", "hover", "condensed", "responsive")) #apply other formatting
+
+str(vital)
+head(vital)
+
+summary(vital)
+
+  
+ggplot (data = vital) +
+    geom_line(aes(x = Year,  y = `Opioid Poisoning Deaths`, group = County, col = County)) + 
+    geom_point(aes(x = Year,  y = `Opioid Poisoning Deaths`, group = County, col = County, size = `Opioid Poisoning Deaths`)) +
+  geom_smooth(aes(x = Year,  y = `Opioid Poisoning Deaths`))+
+    theme_bw()
 ```
 
 Add any additional processing steps here.
