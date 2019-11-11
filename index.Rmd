@@ -38,8 +38,7 @@ library(tidyverse)
 library(tidycensus)
 library(leaflet)
 library(mapview) 
-
-
+library(tidyr)
 
 knitr::opts_chunk$set(cache=TRUE)  # cache the results for quick compiling
 ```
@@ -49,7 +48,7 @@ knitr::opts_chunk$set(cache=TRUE)  # cache the results for quick compiling
 
 NY <- get_acs(geography = "county", 
               variables = c(medincome = "B19013_001"), 
-              state = "NY")
+              state = "NY", geometry = TRUE, cache_table=T)
 
 ## Opioid Deaths
 vital <- read.csv('data/vital.csv')
@@ -58,10 +57,27 @@ head(vital)
 str(NY)
 head(NY)
 
-vital_ny <- vital %>%
+ny_sep <- NY %>%
+    separate(NAME, c("County"))
+ny_sep
+ny_sep[45,"County"] <- "St Lawrence"
+View(ny_sep)
+
+
+
+vital_2017 <- vital %>%
     filter(Year == 2017)
     
-vital_ny
+vital_ny_2017 <- ny_sep %>%
+    left_join(vital_2017, by = "County")
+vital_ny_2017
+View(vital_ny_2017)
+names(vital_ny_2017)
+
+class(vital_ny_2017)
+
+
+plot(vital_ny_2017)
 ```
 
 
@@ -86,11 +102,23 @@ ggplotly(g, tooltip = c("County", "Opioid.Poisoning.Deaths", "Year"))
     
     
 
-
+nycounties <- geojsonio::geojson_read("json/nycounties.geojson",
+  what = "sp")
 ```
 
+```{r echo=FALSE, fig.height=12, fig.width=10}
 
+mapview(vital_ny_2017, zcol = "Opioid.Poisoning.Deaths", legend = TRUE, alpha = 0.5)
+```
 
+```{r echo=FALSE, fig.height=12, fig.width=10}
+vital_ny_2017 %>%
+  ggplot(aes(fill = Opioid.Poisoning.Deaths)) + 
+  geom_sf(color = NA) + 
+  coord_sf(crs = 26911) + 
+  scale_fill_viridis_c()
+
+```
 # Conclusions
 
 What have you learned?  Are there any broader implications?
