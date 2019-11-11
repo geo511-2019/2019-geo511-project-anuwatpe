@@ -15,7 +15,7 @@
 
 <title>Opoid-Related Deaths in New York State</title>
 
-<script src="site_libs/jquery-1.12.4/jquery.min.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/simplex.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
@@ -27,14 +27,6 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<script src="site_libs/htmlwidgets-1.3/htmlwidgets.js"></script>
-<link href="site_libs/leaflet-1.3.1/leaflet.css" rel="stylesheet" />
-<script src="site_libs/leaflet-1.3.1/leaflet.js"></script>
-<link href="site_libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet" />
-<script src="site_libs/Proj4Leaflet-1.0.1/proj4-compressed.js"></script>
-<script src="site_libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
-<link href="site_libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet" />
-<script src="site_libs/leaflet-binding-2.0.2/leaflet.js"></script>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -441,27 +433,20 @@ str(vital)</code></pre>
 ## 4 36007 Broome County, New York      medincome    49064  1113
 ## 5 36009 Cattaraugus County, New York medincome    45571  1241
 ## 6 36011 Cayuga County, New York      medincome    54664  1603</code></pre>
-<pre class="r"><code>ggplot (data = vital) +
-    geom_line(aes(x = Year,  y = Opioid.Poisoning.Deaths, group = County, col = County)) + 
-    geom_point(aes(x = Year,  y = Opioid.Poisoning.Deaths, group = County, col = County, size = Opioid.Poisoning.Deaths)) +
-    geom_smooth(aes(x = Year,  y = Opioid.Poisoning.Deaths))+
-    theme_bw()</code></pre>
-<pre><code>## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
-<p><img src="index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <p>Add any additional processing steps here.</p>
 </div>
 </div>
 <div id="results" class="section level1">
 <h1>Results</h1>
 <p>Show tables, plots, etc. and describe them.</p>
-<pre class="r"><code>m &lt;- leaflet(data) %&gt;% 
-  addTiles() %&gt;% 
-  addCircleMarkers(~x, ~y, radius = ~size,color = ~as.factor(category)) %&gt;% 
-  addPopups(~x[2], ~y[2], &quot;Random popup&quot;)
-m  # a map with the default OSM tile layer</code></pre>
+<pre class="r"><code>ggplot (data = vital) +
+    geom_line(aes(x = Year,  y = Opioid.Poisoning.Deaths, group = County, col = County)) + 
+    geom_point(aes(x = Year,  y = Opioid.Poisoning.Deaths, group = County, col = County, size = Opioid.Poisoning.Deaths)) +
+    geom_smooth(aes(x = Year,  y = Opioid.Poisoning.Deaths))+
+    theme_bw()</code></pre>
+<pre><code>## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
 <div class="figure">
-<div id="htmlwidget-915746a7e1b9362f1899" style="width:576px;height:288px;" class="leaflet html-widget"></div>
-<script type="application/json" data-for="htmlwidget-915746a7e1b9362f1899">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]},{"method":"addCircleMarkers","args":[[54.3395855370909,33.0323229823261,35.0090814940631,-10.0927929393947,23.8287611491978,54.3178640026599,0.423402171581984,45.2412475179881,-50.1901574246585,-25.0753615703434,55.1932372525334,45.1272739470005,-5.32478668726981,34.6777669899166,0.767757659777999,6.0125241894275,-11.9135859142989,-18.0011245887727,0.594164477661252,43.4550909698009],[86.6953185014427,-75.6299755163491,3.01813297905028,-85.6907204166055,111.203807238489,-172.015685616061,-5.90003035962582,-0.935706133022904,-128.881121501327,167.943191863596,-65.3937538806349,-148.439866499975,77.6582220755517,-135.558154871687,-100.567361125723,133.855197988451,-81.3618238270283,118.3788571693,125.473693460226,-176.488680616021],[18.9556660747621,19.2765241512097,11.7203709948808,15.6816499156412,7.03844956005923,11.1792386195157,8.02874115412124,11.1140879511368,10.905483084498,11.4310531085357,11.1466585495509,6.6641358891502,12.8008391335607,6.01090144715272,5.46009150100872,17.6288696750998,5.04077242338099,11.9281678041443,5.10136951808818,10.4381230799481],null,null,{"interactive":true,"className":"","stroke":true,"color":["e","d","c","e","c","d","b","d","b","d","c","e","a","c","c","b","a","e","a","b"],"weight":5,"opacity":0.5,"fill":true,"fillColor":["e","d","c","e","c","d","b","d","b","d","c","e","a","c","c","b","a","e","a","b"],"fillOpacity":0.2},null,null,null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]},{"method":"addPopups","args":[33.0323229823261,-75.6299755163491,"Random popup",null,null,{"maxWidth":300,"minWidth":50,"autoPan":true,"keepInView":false,"closeButton":true,"className":""}]}],"limits":{"lat":[-50.1901574246585,55.1932372525334],"lng":[-176.488680616021,167.943191863596]}},"evals":[],"jsHooks":[]}</script>
+<img src="index_files/figure-html/unnamed-chunk-5-1.png" alt="Map of completely random data" width="576" />
 <p class="caption">
 Map of completely random data
 </p>
