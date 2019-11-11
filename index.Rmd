@@ -33,11 +33,12 @@ Here's my first code chunk.
 
 Load any required packages in a code chunk (you may need to install some packages):
 
-```{r, message=F, warning=F}
+```{r message=FALSE, warning=FALSE, include=FALSE}
 library(tidyverse)
 library(tidycensus)
 library(leaflet)
 library(mapview) 
+
 
 
 knitr::opts_chunk$set(cache=TRUE)  # cache the results for quick compiling
@@ -57,16 +58,14 @@ head(vital)
 str(NY)
 head(NY)
 
-
-
+vital_ny <- vital %>%
+    filter(Year == 2017)
+    
+vital_ny
 ```
 
-```{r, results='asis'}
 
 
-
-
-```
 
 Add any additional processing steps here.
 
@@ -74,22 +73,23 @@ Add any additional processing steps here.
 
 Show tables, plots, etc. and describe them.
 
-```{r, fig.width=6, fig.height=3, fig.cap="Map of completely random data"}
-
-ggplot (data = vital) +
+```{r echo=FALSE, fig.cap="Map, fig.height=12, fig.width=10}
+library(plotly)
+g <- ggplot (data = vital) +
     geom_line(aes(x = Year,  y = Opioid.Poisoning.Deaths, group = County, col = County)) + 
     geom_point(aes(x = Year,  y = Opioid.Poisoning.Deaths, group = County, col = County, size = Opioid.Poisoning.Deaths)) +
     geom_smooth(aes(x = Year,  y = Opioid.Poisoning.Deaths)) +
     theme_bw() +
-    theme(legend.position = "none") 
+    labs (title = "Annual Number of Opioid Related Deaths in New York 2003-2017", x = "Year", y= "Number of Opioid Related Deaths")
+
+ggplotly(g, tooltip = c("County", "Opioid.Poisoning.Deaths", "Year"))
+    
+    
 
 
 ```
 
 
-```{r}
-
-```
 
 # Conclusions
 
