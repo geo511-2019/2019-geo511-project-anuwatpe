@@ -48,8 +48,15 @@ knitr::opts_chunk$set(cache=TRUE)  # cache the results for quick compiling
 NY <- get_acs(geography = "county", 
               variables = c(medincome = "B19013_001"), 
               state = "NY")
+
+## Opioid Deaths
+vital <- read.csv('data/vital.csv')
+str(vital)
+head(vital)
 str(NY)
 head(NY)
+
+
 NY %>%
   mutate(NAME = gsub(" County, New York ", "", NAME)) %>%
   left_join(vital, c("County" = "NAME")) +
@@ -61,27 +68,22 @@ NY %>%
        y = "",
        x = "ACS estimate (bars represent margin of error)")
 
+head(NY)
+
+
+
 
 ```
 
 ```{r, results='asis'}
-data %>% 
-  slice(1:10) %>% #show only 1:n rows
-  kable(digits=2,align="c")%>% #make table and round to two digits
-  kable_styling(bootstrap_options = 
-                  c("striped", "hover", "condensed", "responsive")) #apply other formatting
 
-str(vital)
-head(vital)
 
-summary(vital)
-
-  
 ggplot (data = vital) +
-    geom_line(aes(x = Year,  y = `Opioid Poisoning Deaths`, group = County, col = County)) + 
-    geom_point(aes(x = Year,  y = `Opioid Poisoning Deaths`, group = County, col = County, size = `Opioid Poisoning Deaths`)) +
-  geom_smooth(aes(x = Year,  y = `Opioid Poisoning Deaths`))+
+    geom_line(aes(x = Year,  y = Opioid.Poisoning.Deaths, group = County, col = County)) + 
+    geom_point(aes(x = Year,  y = Opioid.Poisoning.Deaths, group = County, col = County, size = Opioid.Poisoning.Deaths)) +
+    geom_smooth(aes(x = Year,  y = Opioid.Poisoning.Deaths))+
     theme_bw()
+
 ```
 
 Add any additional processing steps here.
