@@ -392,6 +392,7 @@ div.tocify {
 <pre class="r"><code>library(tidyverse)
 library(tidycensus)
 library(leaflet)
+library(mapview) 
 
 
 knitr::opts_chunk$set(cache=TRUE)  # cache the results for quick compiling</code></pre>
@@ -442,8 +443,9 @@ str(vital)</code></pre>
 <pre class="r"><code>ggplot (data = vital) +
     geom_line(aes(x = Year,  y = Opioid.Poisoning.Deaths, group = County, col = County)) + 
     geom_point(aes(x = Year,  y = Opioid.Poisoning.Deaths, group = County, col = County, size = Opioid.Poisoning.Deaths)) +
-    geom_smooth(aes(x = Year,  y = Opioid.Poisoning.Deaths))+
-    theme_bw()</code></pre>
+    geom_smooth(aes(x = Year,  y = Opioid.Poisoning.Deaths)) +
+    theme_bw() +
+    theme(legend.position = &quot;none&quot;)</code></pre>
 <pre><code>## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
 <div class="figure">
 <img src="index_files/figure-html/unnamed-chunk-5-1.png" alt="Map of completely random data" width="576" />
@@ -451,10 +453,6 @@ str(vital)</code></pre>
 Map of completely random data
 </p>
 </div>
-<pre class="r"><code>data %&gt;% 
-  ggplot(aes(x=x,y=y,col=category))+
-  geom_point()</code></pre>
-<p><img src="index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 </div>
 <div id="conclusions" class="section level1">
 <h1>Conclusions</h1>

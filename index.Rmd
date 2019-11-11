@@ -37,6 +37,7 @@ Load any required packages in a code chunk (you may need to install some package
 library(tidyverse)
 library(tidycensus)
 library(leaflet)
+library(mapview) 
 
 
 knitr::opts_chunk$set(cache=TRUE)  # cache the results for quick compiling
@@ -74,18 +75,19 @@ Add any additional processing steps here.
 Show tables, plots, etc. and describe them.
 
 ```{r, fig.width=6, fig.height=3, fig.cap="Map of completely random data"}
+
 ggplot (data = vital) +
     geom_line(aes(x = Year,  y = Opioid.Poisoning.Deaths, group = County, col = County)) + 
     geom_point(aes(x = Year,  y = Opioid.Poisoning.Deaths, group = County, col = County, size = Opioid.Poisoning.Deaths)) +
-    geom_smooth(aes(x = Year,  y = Opioid.Poisoning.Deaths))+
-    theme_bw()
+    geom_smooth(aes(x = Year,  y = Opioid.Poisoning.Deaths)) +
+    theme_bw() +
+    theme(legend.position = "none")
+
 ```
 
 
 ```{r}
-data %>% 
-  ggplot(aes(x=x,y=y,col=category))+
-  geom_point()
+
 ```
 
 # Conclusions
