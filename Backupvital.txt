@@ -1,11 +1,7 @@
 ---
 title: "Opoid-Related Deaths in New York State"
 author: "Anuwat Pengput"
-subtitle: Spatial Epidemiological Analysis and Risk Factors of Opoid-Related Deathsin
-  New York
-output:
-  html_document:
-    df_print: paged
+subtitle: "Spatial Epidemiological Analysis and Risk Factors of Opoid-Related Deathsin New York"
 ---
 
 # Introduction
@@ -38,16 +34,11 @@ Here's my first code chunk.
 Load any required packages in a code chunk (you may need to install some packages):
 
 ```{r message=FALSE, warning=FALSE, include=FALSE}
-library(tidyverse)
 library(tidycensus)
 library(leaflet)
 library(mapview) 
 library(tidyr)
 library(plotly)
-library(ggiraphExtra)
-library(ggiraph)
-library(ggiraphExtra)
-library(plyr)
 
 knitr::opts_chunk$set(cache=TRUE)  # cache the results for quick compiling
 ```
@@ -86,12 +77,13 @@ g <- ggplot (data = vital) +
     theme_bw() +
     labs (title = "Annual Number of Opioid Related Deaths in New York 2003-2017", x = "Year", y= "Number of Opioid Related Deaths")
 
+ggplotly (g, tooltip = c("County", "Opioid.Poisoning.Deaths", "Year"))
     
 ```
 
 
 
-```{r echo=TRUE, warning=FALSE}
+```{r echo=TRUE}
 
 fit=lm(Opioid.Poisoning.Deaths ~ estimate, data = vital_ny_2017)
 summary(fit)
@@ -107,7 +99,7 @@ ggplot(vital_ny_2017,aes(y=Opioid.Poisoning.Deaths,x=estimate)) +
 
 Show tables, plots, etc. and describe them.
 
-```{r echo=TRUE, fig.height=10, fig.width=8, warning=FALSE}
+```{r echo=TRUE, fig.height=10, fig.width=8}
 
 ggplotly (g, tooltip = c("County", "Opioid.Poisoning.Deaths", "Year"))
     
@@ -136,6 +128,6 @@ ggPredict(fit,se=TRUE,interactive=TRUE)
 
 # Conclusions
 
-
+What have you learned?  Are there any broader implications?
 
 # References
