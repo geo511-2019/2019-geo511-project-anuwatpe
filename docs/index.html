@@ -13,7 +13,7 @@
 <meta name="author" content="Anuwat Pengput" />
 
 
-<title>I have the best titles</title>
+<title>Opoid-Related Deaths in New York State</title>
 
 <script src="site_libs/jquery-1.12.4/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -27,7 +27,6 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
 <script src="site_libs/htmlwidgets-1.3/htmlwidgets.js"></script>
 <link href="site_libs/leaflet-1.3.1/leaflet.css" rel="stylesheet" />
 <script src="site_libs/leaflet-1.3.1/leaflet.js"></script>
@@ -367,8 +366,8 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">I have the best titles</h1>
-<h3 class="subtitle">Subtitle here if desired</h3>
+<h1 class="title toc-ignore">Opoid-Related Deaths in New York State</h1>
+<h3 class="subtitle">Spatial Epidemiological Analysis and Risk Factors of Opoid-Related Deathsin New York</h3>
 <h4 class="author">Anuwat Pengput</h4>
 
 </div>
@@ -376,7 +375,7 @@ div.tocify {
 
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p>My really awesome and complete introduction will go here.</p>
+<p>Opioid analgesics are pain relievers derived from opium or have an opium-like activity. There are no better drugs than opioids for treating severe pain and suffering, however, opioids are the main drugs associated with overdose deaths. Opioid prescription rates have increased almost threefold associated with an increase of opioid related overdoses and deaths in the last 15 years. New York has been greatly impacted by the opioid epidemic. The rate of deaths related to any opioid in New York has increased by 210% from 2010 to 2016. The opioid overdose death rate in the overall state was 18 deaths per 100,000 residents, which was higher than many states in the United States.</p>
 </div>
 <div id="materials-and-methods" class="section level1">
 <h1>Materials and methods</h1>
@@ -399,217 +398,56 @@ div.tocify {
 <pre><code>## [1] 3</code></pre>
 <p>Load any required packages in a code chunk (you may need to install some packages):</p>
 <pre class="r"><code>library(tidyverse)
+library(tidycensus)
 library(leaflet)
-library(kableExtra)
+
+
 knitr::opts_chunk$set(cache=TRUE)  # cache the results for quick compiling</code></pre>
 <div id="download-and-clean-all-required-data" class="section level2">
 <h2>Download and clean all required data</h2>
-<pre class="r"><code>n=20
-data=data.frame(x=runif(n,-180,180),
-                y=runif(n,-60,60),
-                size = runif(n, 5, 20),
-                category = factor(
-                  sample(letters[1:5], n, replace = TRUE)
-                  ),
-                value = rnorm(n))</code></pre>
-<pre class="r"><code>data %&gt;% 
-  slice(1:10) %&gt;% #show only 1:n rows
-  kable(digits=2,align=&quot;c&quot;)%&gt;% #make table and round to two digits
-  kable_styling(bootstrap_options = 
-                  c(&quot;striped&quot;, &quot;hover&quot;, &quot;condensed&quot;, &quot;responsive&quot;)) #apply other formatting</code></pre>
-<table class="table table-striped table-hover table-condensed table-responsive" style="margin-left: auto; margin-right: auto;">
-<thead>
-<tr>
-<th style="text-align:center;">
-x
-</th>
-<th style="text-align:center;">
-y
-</th>
-<th style="text-align:center;">
-size
-</th>
-<th style="text-align:center;">
-category
-</th>
-<th style="text-align:center;">
-value
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center;">
-86.70
-</td>
-<td style="text-align:center;">
-54.34
-</td>
-<td style="text-align:center;">
-18.96
-</td>
-<td style="text-align:center;">
-e
-</td>
-<td style="text-align:center;">
-0.14
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
--75.63
-</td>
-<td style="text-align:center;">
-33.03
-</td>
-<td style="text-align:center;">
-19.28
-</td>
-<td style="text-align:center;">
-d
-</td>
-<td style="text-align:center;">
--0.12
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-3.02
-</td>
-<td style="text-align:center;">
-35.01
-</td>
-<td style="text-align:center;">
-11.72
-</td>
-<td style="text-align:center;">
-c
-</td>
-<td style="text-align:center;">
-0.15
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
--85.69
-</td>
-<td style="text-align:center;">
--10.09
-</td>
-<td style="text-align:center;">
-15.68
-</td>
-<td style="text-align:center;">
-e
-</td>
-<td style="text-align:center;">
--1.11
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-111.20
-</td>
-<td style="text-align:center;">
-23.83
-</td>
-<td style="text-align:center;">
-7.04
-</td>
-<td style="text-align:center;">
-c
-</td>
-<td style="text-align:center;">
--0.74
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
--172.02
-</td>
-<td style="text-align:center;">
-54.32
-</td>
-<td style="text-align:center;">
-11.18
-</td>
-<td style="text-align:center;">
-d
-</td>
-<td style="text-align:center;">
-1.22
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
--5.90
-</td>
-<td style="text-align:center;">
-0.42
-</td>
-<td style="text-align:center;">
-8.03
-</td>
-<td style="text-align:center;">
-b
-</td>
-<td style="text-align:center;">
-0.91
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
--0.94
-</td>
-<td style="text-align:center;">
-45.24
-</td>
-<td style="text-align:center;">
-11.11
-</td>
-<td style="text-align:center;">
-d
-</td>
-<td style="text-align:center;">
--0.47
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
--128.88
-</td>
-<td style="text-align:center;">
--50.19
-</td>
-<td style="text-align:center;">
-10.91
-</td>
-<td style="text-align:center;">
-b
-</td>
-<td style="text-align:center;">
--1.93
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-167.94
-</td>
-<td style="text-align:center;">
--25.08
-</td>
-<td style="text-align:center;">
-11.43
-</td>
-<td style="text-align:center;">
-d
-</td>
-<td style="text-align:center;">
-0.80
-</td>
-</tr>
-</tbody>
-</table>
+<pre class="r"><code>NY &lt;- get_acs(geography = &quot;county&quot;, 
+              variables = c(medincome = &quot;B19013_001&quot;), 
+              state = &quot;NY&quot;)</code></pre>
+<pre><code>## Getting data from the 2013-2017 5-year ACS</code></pre>
+<pre class="r"><code>## Opioid Deaths
+vital &lt;- read.csv(&#39;data/vital.csv&#39;)
+str(vital)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    930 obs. of  3 variables:
+##  $ Year                   : int  2003 2003 2003 2003 2003 2003 2003 2003 2003 2003 ...
+##  $ County                 : Factor w/ 62 levels &quot;Albany&quot;,&quot;Allegany&quot;,..: 1 2 3 4 5 6 7 8 9 10 ...
+##  $ Opioid.Poisoning.Deaths: int  4 0 105 5 1 1 3 2 1 1 ...</code></pre>
+<pre class="r"><code>head(vital)</code></pre>
+<pre><code>##   Year      County Opioid.Poisoning.Deaths
+## 1 2003      Albany                       4
+## 2 2003    Allegany                       0
+## 3 2003       Bronx                     105
+## 4 2003      Broome                       5
+## 5 2003 Cattaraugus                       1
+## 6 2003      Cayuga                       1</code></pre>
+<pre class="r"><code>str(NY)</code></pre>
+<pre><code>## Classes &#39;tbl_df&#39;, &#39;tbl&#39; and &#39;data.frame&#39;:    62 obs. of  5 variables:
+##  $ GEOID   : chr  &quot;36001&quot; &quot;36003&quot; &quot;36005&quot; &quot;36007&quot; ...
+##  $ NAME    : chr  &quot;Albany County, New York&quot; &quot;Allegany County, New York&quot; &quot;Bronx County, New York&quot; &quot;Broome County, New York&quot; ...
+##  $ variable: chr  &quot;medincome&quot; &quot;medincome&quot; &quot;medincome&quot; &quot;medincome&quot; ...
+##  $ estimate: num  62293 45359 36593 49064 45571 ...
+##  $ moe     : num  1234 1489 389 1113 1241 ...</code></pre>
+<pre class="r"><code>head(NY)</code></pre>
+<pre><code>## # A tibble: 6 x 5
+##   GEOID NAME                         variable  estimate   moe
+##   &lt;chr&gt; &lt;chr&gt;                        &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt;
+## 1 36001 Albany County, New York      medincome    62293  1234
+## 2 36003 Allegany County, New York    medincome    45359  1489
+## 3 36005 Bronx County, New York       medincome    36593   389
+## 4 36007 Broome County, New York      medincome    49064  1113
+## 5 36009 Cattaraugus County, New York medincome    45571  1241
+## 6 36011 Cayuga County, New York      medincome    54664  1603</code></pre>
+<pre class="r"><code>ggplot (data = vital) +
+    geom_line(aes(x = Year,  y = Opioid.Poisoning.Deaths, group = County, col = County)) + 
+    geom_point(aes(x = Year,  y = Opioid.Poisoning.Deaths, group = County, col = County, size = Opioid.Poisoning.Deaths)) +
+    geom_smooth(aes(x = Year,  y = Opioid.Poisoning.Deaths))+
+    theme_bw()</code></pre>
+<pre><code>## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
+<p><img src="index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <p>Add any additional processing steps here.</p>
 </div>
 </div>

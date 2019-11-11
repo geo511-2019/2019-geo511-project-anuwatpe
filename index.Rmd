@@ -57,21 +57,6 @@ str(NY)
 head(NY)
 
 
-NY %>%
-  mutate(NAME = gsub(" County, New York ", "", NAME)) %>%
-  left_join(vital, c("County" = "NAME")) +
-  ggplot(aes(x = estimate, y = reorder(NAME, estimate))) +
-  geom_errorbarh(aes(xmin = estimate - moe, xmax = estimate + moe)) +
-  geom_point(color = "red", size = 3) +
-  labs(title = "Household income by county in New York",
-       subtitle = "2013-2017 American Community Survey",
-       y = "",
-       x = "ACS estimate (bars represent margin of error)")
-
-head(NY)
-
-
-
 
 ```
 
