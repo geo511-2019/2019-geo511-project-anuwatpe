@@ -81,7 +81,8 @@ ggplot (data = vital) +
     geom_point(aes(x = Year,  y = Opioid.Poisoning.Deaths, group = County, col = County, size = Opioid.Poisoning.Deaths)) +
     geom_smooth(aes(x = Year,  y = Opioid.Poisoning.Deaths)) +
     theme_bw() +
-    theme(legend.position = "none")
+    theme(legend.position = "none") 
+
 
 ```
 
