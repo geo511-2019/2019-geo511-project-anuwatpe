@@ -61,8 +61,6 @@ ny_sep <- NY %>%
     separate(NAME, c("County"))
 ny_sep
 ny_sep[45,"County"] <- "St Lawrence"
-View(ny_sep)
-
 
 
 vital_2017 <- vital %>%
@@ -70,14 +68,7 @@ vital_2017 <- vital %>%
     
 vital_ny_2017 <- ny_sep %>%
     left_join(vital_2017, by = "County")
-vital_ny_2017
-View(vital_ny_2017)
-names(vital_ny_2017)
 
-class(vital_ny_2017)
-
-
-plot(vital_ny_2017)
 ```
 
 
@@ -100,10 +91,6 @@ g <- ggplot (data = vital) +
 
 ggplotly(g, tooltip = c("County", "Opioid.Poisoning.Deaths", "Year"))
     
-    
-
-nycounties <- geojsonio::geojson_read("json/nycounties.geojson",
-  what = "sp")
 ```
 
 ```{r echo=FALSE, fig.height=12, fig.width=10}
@@ -111,7 +98,7 @@ nycounties <- geojsonio::geojson_read("json/nycounties.geojson",
 mapview(vital_ny_2017, zcol = "Opioid.Poisoning.Deaths", legend = TRUE, alpha = 0.5)
 ```
 
-```{r echo=FALSE, fig.height=12, fig.width=10}
+```{r echo=FALSE}
 vital_ny_2017 %>%
   ggplot(aes(fill = Opioid.Poisoning.Deaths)) + 
   geom_sf(color = NA) + 
