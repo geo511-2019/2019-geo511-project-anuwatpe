@@ -20,25 +20,26 @@ Opioid analgesics are pain relievers derived from opium or have an opium-like ac
 4. Predict association between number of opioid deaths and household incomes
 
 
-Load any required packages in a code chunk (you may need to install some packages):
-
-```{r message=FALSE, warning=FALSE, include=FALSE}
+```{r message=FALSE, warning=FALSE}
 library(tidyverse)
 library(tidycensus)
-library(leaflet)
+# install.packages("mapview")
 library(mapview) 
 library(tidyr)
+# install.packages("plotly")
 library(plotly)
+# install.packages("ggiraphExtra")
 library(ggiraphExtra)
 library(ggiraph)
 library(ggiraphExtra)
+# install.packages("plyr")
 library(plyr)
 
 knitr::opts_chunk$set(cache=TRUE)  # cache the results for quick compiling
 ```
 
 ## Download and clean all required data
-```{r echo=TRUE, warning=FALSE}
+```{r, message=FALSE, warning=FALSE, results = 'hide'}
 
 NY <- get_acs(geography = "county", 
               variables = c(medincome = "B19013_001"), 
@@ -62,7 +63,7 @@ vital_ny_2017 <- ny_sep %>%
 ```
 
 
-```{r echo=TRUE, fig.height=10, fig.width=8}
+```{r, fig.height=10, fig.width=8}
 
 g <- ggplot (data = vital) +
     geom_line(aes(x = Year,  y = Opioid.Poisoning.Deaths, group = County, col = County)) + 
@@ -76,14 +77,11 @@ g <- ggplot (data = vital) +
 
 
 
-```{r echo=TRUE, warning=FALSE}
+```{r, warning=FALSE, results = 'hide'}
 
 fit=lm(Opioid.Poisoning.Deaths ~ estimate, data = vital_ny_2017)
 summary(fit)
 
-ggplot(vital_ny_2017,aes(y=Opioid.Poisoning.Deaths,x=estimate)) + 
-      geom_point() +
-      geom_smooth(method="lm")
 
 ```
 
