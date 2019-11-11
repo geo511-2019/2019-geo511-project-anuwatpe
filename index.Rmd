@@ -73,7 +73,7 @@ Add any additional processing steps here.
 
 Show tables, plots, etc. and describe them.
 
-```{r echo=FALSE, fig.cap="Map, fig.height=12, fig.width=10}
+```{r echo=FALSE, fig.height=12, fig.width=10}
 library(plotly)
 g <- ggplot (data = vital) +
     geom_line(aes(x = Year,  y = Opioid.Poisoning.Deaths, group = County, col = County)) + 
