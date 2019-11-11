@@ -13,27 +13,12 @@ Opioid analgesics are pain relievers derived from opium or have an opium-like ac
 
 # Materials and methods
 
-Narrative and most code will go here.  Describe what you are doing and show how to do it (with code).
 
-You can do bullets like this:
+1. Download all packages 
+2. Downlaod opioid data and New York census, and join opioid data and New York census
+3. Create plots and maps to illustrate the distribution of opioid deaths
+4. Predict association between number of opioid deaths and household incomes
 
-* The first most important thing
-* The second most important thing
-* The third most important thing
-
-You can do numbers like this:
-
-1. The first most important thing
-2. The second most important thing
-3. The third most important thing
-
-See [http://rmarkdown.rstudio.com/](http://rmarkdown.rstudio.com/) for all the amazing things you can do.
-
-
-Here's my first code chunk.
-```{r}
-1+2
-```
 
 Load any required packages in a code chunk (you may need to install some packages):
 
@@ -53,14 +38,14 @@ knitr::opts_chunk$set(cache=TRUE)  # cache the results for quick compiling
 ```
 
 ## Download and clean all required data
-```{r echo=TRUE}
+```{r echo=TRUE, warning=FALSE}
 
 NY <- get_acs(geography = "county", 
               variables = c(medincome = "B19013_001"), 
               state = "NY", geometry = TRUE, cache_table=T)
 
-## Opioid Deaths
-vital <- read.csv('data/vital.csv')
+
+vital <- read.csv('data/vital.csv') 
 ny_sep <- NY %>%
     separate(NAME, c("County"))
 ny_sep[45,"County"] <- "St Lawrence"
@@ -135,7 +120,7 @@ ggPredict(fit,se=TRUE,interactive=TRUE)
 ```
 
 # Conclusions
-
+I learned how to prepare data, create plots for final porject.
 
 
 # References
