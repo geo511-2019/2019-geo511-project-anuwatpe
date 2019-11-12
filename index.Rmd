@@ -34,22 +34,21 @@ library(ggiraph)
 library(ggiraphExtra)
 # install.packages("plyr")
 library(plyr)
-
 knitr::opts_chunk$set(cache=TRUE)  # cache the results for quick compiling
 ```
 
 ## Download and clean all required data
 ```{r, message=FALSE, warning=FALSE, results = 'hide'}
-
 NY <- get_acs(geography = "county", 
               variables = c(medincome = "B19013_001"), 
               state = "NY", geometry = TRUE, cache_table=T)
-
-
 vital <- read.csv('data/vital.csv') 
+
+
 ny_sep <- NY %>%
     separate(NAME, c("County"))
 ny_sep[45,"County"] <- "St Lawrence"
+ny_sep[31,"County"] <- "New York"
 
 
 vital_2017 <- vital %>%
@@ -58,31 +57,24 @@ vital_2017 <- vital %>%
 vital_ny_2017 <- ny_sep %>%
     left_join(vital_2017, by = "County")
 
-
-
 ```
 
 
 ```{r, fig.height=10, fig.width=8}
-
 g <- ggplot (data = vital) +
     geom_line(aes(x = Year,  y = Opioid.Poisoning.Deaths, group = County, col = County)) + 
     geom_point(aes(x = Year,  y = Opioid.Poisoning.Deaths, group = County, col = County, size = Opioid.Poisoning.Deaths)) +
     geom_smooth(aes(x = Year,  y = Opioid.Poisoning.Deaths)) +
     theme_bw() +
     labs (title = "Annual Number of Opioid Related Deaths in New York 2003-2017", x = "Year", y= "Number of Opioid Related Deaths")
-
     
 ```
 
 
 
 ```{r, warning=FALSE, results = 'hide'}
-
 fit=lm(Opioid.Poisoning.Deaths ~ estimate, data = vital_ny_2017)
 summary(fit)
-
-
 ```
 
 
@@ -90,31 +82,23 @@ summary(fit)
 
 Show tables, plots, etc. and describe them.
 
-```{r echo=TRUE, fig.height=10, fig.width=8, warning=FALSE}
-
+```{r echo=TRUE, warning=FALSE}
 ggplotly (g, tooltip = c("County", "Opioid.Poisoning.Deaths", "Year"))
     
 ```
 
-```{r echo=TRUE, fig.height=10, fig.width=8}
-
+```{r echo=TRUE}
 mapview(vital_ny_2017, zcol = "Opioid.Poisoning.Deaths", legend = TRUE, alpha = 0.5)
 ```
 
 ```{r echo=TRUE, warning=FALSE}
-
 ggplot(vital_ny_2017,aes(y=Opioid.Poisoning.Deaths,x=estimate)) + 
       geom_point() +
       geom_smooth(method="lm")
-
 ```
 
 ```{r echo=TRUE}
-
-
 ggPredict(fit,se=TRUE,interactive=TRUE)
-
-
 ```
 
 # Conclusions
