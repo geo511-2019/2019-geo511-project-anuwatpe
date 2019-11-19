@@ -1,17 +1,17 @@
 ---
 title: "Opoid-Related Deaths in New York State"
 author: "Anuwat Pengput"
-subtitle: Spatial Epidemiological Analysis and Risk Factors of Opoid-Related Deathsin
+subtitle: Spatial Epidemiological Analysis and Risk Factors of Opoid-Related Deaths in
   New York
 output:
   html_document:
     df_print: paged
 ---
 
-# Introduction
+# Introduction 
 Opioid analgesics are pain relievers derived from opium or have an opium-like activity. There are no better drugs than opioids for treating severe pain and suffering, however, opioids are the main drugs associated with overdose deaths. Opioid prescription rates have increased almost threefold associated with an increase of opioid related overdoses and deaths in the last 15 years. New York has been greatly impacted by the opioid epidemic. The rate of deaths related to any opioid in New York has increased by 210% from 2010 to 2016. The opioid overdose death rate in the overall state was 18 deaths per 100,000 residents, which was higher than many states in the United States.  
 
-# Materials and methods
+# Materials and methods 
 
 
 1. Download all packages 
@@ -60,7 +60,7 @@ vital_ny_2017 <- ny_sep %>%
 ```
 
 
-```{r, fig.height=10, fig.width=8}
+```{r, fig.height=10, fig.width=8} 
 g <- ggplot (data = vital) +
     geom_line(aes(x = Year,  y = Opioid.Poisoning.Deaths, group = County, col = County)) + 
     geom_point(aes(x = Year,  y = Opioid.Poisoning.Deaths, group = County, col = County, size = Opioid.Poisoning.Deaths)) +
@@ -78,7 +78,7 @@ summary(fit)
 ```
 
 
-# Results
+# Results 
 
 Show tables, plots, etc. and describe them.
 
@@ -102,7 +102,7 @@ ggPredict(fit,se=TRUE,interactive=TRUE)
 ```
 
 # Conclusions
-I learned how to prepare data, create plots for final porject.
+I learned how to prepare data, create plots for final project.
 
 
-# References
+# References 
