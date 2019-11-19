@@ -2,7 +2,7 @@
 title: "Opoid-Related Deaths in New York State"
 author: "Anuwat Pengput"
 subtitle: Spatial Epidemiological Analysis and Risk Factors of Opoid-Related Deathsin
-  New York
+  New York 
 output:
   html_document:
     df_print: paged
@@ -83,15 +83,15 @@ summary(fit)
 Show tables, plots, etc. and describe them.
 
 ```{r echo=TRUE, warning=FALSE}
-ggplotly (g, tooltip = c("County", "Opioid.Poisoning.Deaths", "Year"))
+ggplotly (g, tooltip = c("County", "Opioid.Poisoning.Deaths", "Year")) 
     
 ```
 
 ```{r echo=TRUE}
-mapview(vital_ny_2017, zcol = "Opioid.Poisoning.Deaths", legend = TRUE, alpha = 0.5)
+mapview(vital_ny_2017, zcol = "Opioid.Poisoning.Deaths", legend = TRUE, alpha = 0.5) 
 ```
 
-```{r echo=TRUE, warning=FALSE}
+```{r echo=TRUE, warning=FALSE} 
 ggplot(vital_ny_2017,aes(y=Opioid.Poisoning.Deaths,x=estimate)) + 
       geom_point() +
       geom_smooth(method="lm")
