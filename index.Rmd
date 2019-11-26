@@ -18,6 +18,8 @@ Opioid analgesics are pain relievers derived from opium or have an opium-like ac
 2. Downlaod opioid data and New York census, and join opioid data and New York census
 3. Create plots and maps to illustrate the distribution of opioid deaths
 4. Predict association between number of opioid deaths and household incomes
+5. Prevalence of deaths - deaths/popilation
+6. Risk factors/ retrieve data to df -> look at case study 11 
 
 
 ```{r message=FALSE, warning=FALSE}
@@ -39,35 +41,135 @@ knitr::opts_chunk$set(cache=TRUE)  # cache the results for quick compiling
 
 ## Download and clean all required data
 ```{r, message=FALSE, warning=FALSE, results = 'hide'}
-NY <- get_acs(geography = "county", 
-              variables = c(medincome = "B19013_001"), 
-              state = "NY", geometry = TRUE, cache_table=T)
+## Download opioid-related deaths in New York 2003-2017
+
 vital <- read.csv('data/vital.csv') 
+v17 <- load_variables(2017, "acs5", cache = TRUE)
+#View(v17)
 
+# Download socio-economic data year 2017 from ACS
+NY <- get_acs(geography = "county", 
+              variables = c(medincome = "B19013_001", 
+                            urban ="B08016_002", 
+                            rural = "B08016_003", 
+                            divorce = "B06008_004",
+                            male = "B01001_002",
+                            female = "B01001_026",
+                            white = "B02001_002",
+                            african = "B02001_003",
+                            amindian = "B02001_004",
+                            asian = "B02001_005",
+                            hawaii = "B02001_006",
+                            other = "B02001_007",
+                            livealone = "B09021_002",
+                            pop = "B01003_001"), 
+              state = "NY", geometry = TRUE, cache_table=T)
+NY_nomoe <- NY %>%
+  select(-moe)
 
-ny_sep <- NY %>%
+NY2017_wide <- spread(NY_nomoe, variable, estimate)
+#View(NY2017_wide)
+
+# remove "new york" in county names
+ny_2017_clean <- NY2017_wide %>%
     separate(NAME, c("County"))
-ny_sep[45,"County"] <- "St Lawrence"
-ny_sep[31,"County"] <- "New York"
+#head(ny_2017_clean)
 
+## Change the names of counties
+ny_2017_clean[45,"County"] <- "St Lawrence"
+ny_2017_clean[31,"County"] <- "New York"
 
 vital_2017 <- vital %>%
     filter(Year == 2017)
     
-vital_ny_2017 <- ny_sep %>%
+vital_ny_2017 <- ny_2017_clean %>%
     left_join(vital_2017, by = "County")
+#View(vital_ny_2017)
+
+options(tigris_use_cache = TRUE)
+
+## get estmate population 2010
+ny_pop_estimate_2010 <- get_decennial(geography = "county", variables =  "P001001", 
+                  state = "NY", geometry = ,
+                  summary_var = "P001001", cache_table=T) 
+#View(ny_pop_estimate_2010)
+
+ny_pop_estimate_2010 <- ny_pop_estimate_2010 %>%
+    separate(NAME, c("County")) %>%
+    select(-c(variable, summary_value))
+#head(ny_pop_estimate_2010)
+
+
+## join population 10 years estimation to main dataset
+vital_ny_2017 <- vital_ny_2017 %>%
+    left_join(ny_pop_estimate_2010, by = "County")
+View(vital_ny_2017)
+
+# Cummuative all opioid deaths between 2003-2017
+vital_overall <- spread(vital, Year, Opioid.Poisoning.Deaths)
+vital_overall <- vital_overall %>%
+  mutate(total = vital_overall$`2003` + 
+                vital_overall$`2004` +
+                vital_overall$`2005` +
+         vital_overall$`2006` + 
+           vital_overall$`2007` +
+           vital_overall$`2008` + 
+           vital_overall$`2009` +
+           vital_overall$`2010` +
+           vital_overall$`2011` +
+           vital_overall$`2012` +
+           vital_overall$`2013` +
+           vital_overall$`2014` +
+          vital_overall$`2015` +
+            vital_overall$`2016` +
+           vital_overall$`2017`) %>%
+#vital_overall
+
+
+## join overall number of opioid deaths between 2003-2017 estimation to main dataset
+vital_ny_overall <- vital_ny_2017 %>%
+    left_join(vital_overall, by = "County")
+#View(vital_ny_overall)
+
+vital
+
+## Census race data (2000-2010)
+# sociovars <- c(White = "P005003", 
+              #Black = "P005004", 
+              #Asian = "P005006", 
+              #Hispanic = "P004003",
+              #male = "P012001",
+              #female = "P0120026")
+
+#head(racevars)
+
+
+
+
 
 ```
 
+```{r echo=FALSE, fig.height=10, fig.width=8}
 
-```{r, fig.height=10, fig.width=8}
+## The prevalence rate of opiod deaths in new york
+
+
+## Crude rate of  opioid deaths in 2017
+
+
+
+
+```
+
+```{r fig.height=10, fig.width=8, include=FALSE}
 g <- ggplot (data = vital) +
     geom_line(aes(x = Year,  y = Opioid.Poisoning.Deaths, group = County, col = County)) + 
     geom_point(aes(x = Year,  y = Opioid.Poisoning.Deaths, group = County, col = County, size = Opioid.Poisoning.Deaths)) +
     geom_smooth(aes(x = Year,  y = Opioid.Poisoning.Deaths)) +
     theme_bw() +
     labs (title = "Annual Number of Opioid Related Deaths in New York 2003-2017", x = "Year", y= "Number of Opioid Related Deaths")
-    
+g <- g + facet_wrap(~ County)
+g
 ```
 
 
@@ -82,12 +184,15 @@ summary(fit)
 
 Show tables, plots, etc. and describe them.
 
-```{r echo=TRUE, warning=FALSE}
-ggplotly (g, tooltip = c("County", "Opioid.Poisoning.Deaths", "Year"))
+```{r echo=TRUE, fig.height=8, fig.width=6, warning=FALSE}
+ggplotly (g, tooltip = c("County", "Opioid.Poisoning.Deaths", "Year")) 
+
     
 ```
 
 ```{r echo=TRUE}
+mapviewOptions(legend.pos = "bottomright")
+mapviewOptions(leafletWidth = 800)
 mapview(vital_ny_2017, zcol = "Opioid.Poisoning.Deaths", legend = TRUE, alpha = 0.5)
 ```
 
