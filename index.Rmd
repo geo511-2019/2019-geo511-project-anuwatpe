@@ -1,5 +1,5 @@
 ---
-title: "Opoid-Related Deaths in New York State"
+title: "Opioid-Related Deaths in New York State"
 author: "Anuwat Pengput"
 subtitle: Spatial Epidemiological Analysis and Risk Factors of Opoid-Related Deathsin
   New York
@@ -8,14 +8,14 @@ output:
     df_print: paged
 ---
 
-# Introduction
+# Introduction 
 Opioid analgesics are pain relievers derived from opium or have an opium-like activity. There are no better drugs than opioids for treating severe pain and suffering, however, opioids are the main drugs associated with overdose deaths. Opioid prescription rates have increased almost threefold associated with an increase of opioid related overdoses and deaths in the last 15 years. New York has been greatly impacted by the opioid epidemic. The rate of deaths related to any opioid in New York has increased by 210% from 2010 to 2016. The opioid overdose death rate in the overall state was 18 deaths per 100,000 residents, which was higher than many states in the United States.  
 
 # Materials and methods
 
 
-1. Download all packages 
-2. Downlaod opioid data and New York census, and join opioid data and New York census
+1. Download all packages  
+2. Downlaod opioid data and New York census, and join opioid data and New York census 
 3. Create plots and maps to illustrate the distribution of opioid deaths
 4. Predict association between number of opioid deaths and household incomes
 5. Prevalence of deaths - deaths/popilation
@@ -39,7 +39,7 @@ library(plyr)
 knitr::opts_chunk$set(cache=TRUE)  # cache the results for quick compiling
 ```
 
-## Download and clean all required data
+## Download and clean all required data 
 ```{r, message=FALSE, warning=FALSE, results = 'hide'}
 ## Download opioid-related deaths in New York 2003-2017
 
