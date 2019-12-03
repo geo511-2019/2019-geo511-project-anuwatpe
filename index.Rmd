@@ -1,28 +1,23 @@
 ---
-title: "Opoid-Related Deaths in New York State"
+title: "Opioid-Related Deaths in New York State"
 author: "Anuwat Pengput"
-subtitle: Spatial Epidemiological Analysis and Risk Factors of Opoid-Related Deathsin
-  New York
+subtitle: Spatial Epidemiological Analysis and Prediction of Opioid-Related Deaths
+  in New York State
 output:
   html_document:
     df_print: paged
 ---
 
+
 # Introduction
-Opioid analgesics are pain relievers derived from opium or have an opium-like activity. There are no better drugs than opioids for treating severe pain and suffering, however, opioids are the main drugs associated with overdose deaths. Opioid prescription rates have increased almost threefold associated with an increase of opioid related overdoses and deaths in the last 15 years. New York has been greatly impacted by the opioid epidemic. The rate of deaths related to any opioid in New York has increased by 210% from 2010 to 2016. The opioid overdose death rate in the overall state was 18 deaths per 100,000 residents, which was higher than many states in the United States.  
+<font size="3">Opioid analgesics are pain relievers derived from opium or have an opium-like activity. There are no better drugs than opioids for treating severe pain and suffering, however, opioids are the main drugs associated with overdose deaths (Ballantyne J.C., 2012). Opioid prescription rates have increased almost threefold in association with an increase of opioid related overdoses and deaths in the last 15 years. New York has been greatly impacted by the opioid epidemic. The rate of deaths related to any opioid in New York increased by 210% from 2010 to 2016 (Stopka et al., 2019). The opioid overdose death rate in the overall state was 18 deaths per 100,000 residents, which was higher than 18 states in the United States. This project aimed to investigate the distribution of opioid related-deaths rate, and predict the prevalence of opioid-related deaths across New York State using spatial epidemiological analysis.</font>
 
 # Materials and methods
 
+<font size="3"> The opioid-related death dataset was downloaded from vital Statistics: Opioid-Related Deaths by County in the Health Data New York Website. The opioid-related deaths include heroin and opioid analgesics mortalities (New York State Department of Health, 2019). Socio-economic and census data were directly downloaded from the American Community Survey in the United States Census Bureau (United State Census Bureau, 2019). Two datasets were joined into a data frame for preparing and analyzing data. The trend of opioid deaths in each county was presented from 2003 -2017 by a line plot. The prevalence rates were calculated by the overall number of opioid overdose deaths divided by the estimated population. The prevalence rates were presented across New York State using an interactive map. Moreover, crude rates of opioid deaths were calculated by the number of opioid deaths in each county in 2017 divided by the population of each county in 2017. The death rates were presented by an interactive map. Lastly, a random forest method was used to predict the prevalence rates of opioid poisoning deaths in New York State.</font>
 
-1. Download all packages 
-2. Downlaod opioid data and New York census, and join opioid data and New York census
-3. Create plots and maps to illustrate the distribution of opioid deaths
-4. Predict association between number of opioid deaths and household incomes
-5. Prevalence of deaths - deaths/popilation
-6. Risk factors/ retrieve data to df -> look at case study 11 
-
-
-```{r message=FALSE, warning=FALSE}
+## Download Packages and Libraries for the Project
+```{r setup, message=FALSE}
 library(tidyverse)
 library(tidycensus)
 # install.packages("mapview")
@@ -30,23 +25,35 @@ library(mapview)
 library(tidyr)
 # install.packages("plotly")
 library(plotly)
-# install.packages("ggiraphExtra")
-library(ggiraphExtra)
-library(ggiraph)
-library(ggiraphExtra)
 # install.packages("plyr")
 library(plyr)
+library(DT)
+library(kableExtra)
+library(sf)
+library(ranger)
+library(ggplot2)
+
 knitr::opts_chunk$set(cache=TRUE)  # cache the results for quick compiling
+
 ```
 
 ## Download and clean all required data
-```{r, message=FALSE, warning=FALSE, results = 'hide'}
-## Download opioid-related deaths in New York 2003-2017
+
+
+### 1. Download opioid-related deaths in New York 2003-2017
+```{r wrangling data, warning=FALSE, results = 'hide'}
 
 vital <- read.csv('data/vital.csv') 
+vital
+ny_area <- read.csv('data/area.csv')
 v17 <- load_variables(2017, "acs5", cache = TRUE)
+ny_area
 #View(v17)
+```
 
+### 2. Download socio-economic data year 2017 from American Community Survey
+
+```{r , warning=FALSE, results = 'hide'}
 # Download socio-economic data year 2017 from ACS
 NY <- get_acs(geography = "county", 
               variables = c(medincome = "B19013_001", 
@@ -86,25 +93,53 @@ vital_ny_2017 <- ny_2017_clean %>%
     left_join(vital_2017, by = "County")
 #View(vital_ny_2017)
 
+## Change values in ny_area dataframe
+ny_area$Areas[ny_area$Areas==1]  <- "Urban" 
+ny_area$Areas[ny_area$Areas==2]  <- "Rural"
+ny_area$Regions[ny_area$Regions==1]  <- "Central" 
+ny_area$Regions[ny_area$Regions==2]  <- "East"
+ny_area$Regions[ny_area$Regions==3]   <- "Long Island"
+ny_area$Regions[ny_area$Regions==4]  <- "West"
+
+
+
 options(tigris_use_cache = TRUE)
+
+```
+
+
+### 3. Download estimated decennial population in 2010\ (United State Census Bureau, 2010)
+```{r , warning=FALSE, results = 'hide'}
 
 ## get estmate population 2010
 ny_pop_estimate_2010 <- get_decennial(geography = "county", variables =  "P001001", 
                   state = "NY", geometry = ,
                   summary_var = "P001001", cache_table=T) 
-#View(ny_pop_estimate_2010)
+
+# View(ny_pop_estimate_2010)
 
 ny_pop_estimate_2010 <- ny_pop_estimate_2010 %>%
-    separate(NAME, c("County")) %>%
-    select(-c(variable, summary_value))
-#head(ny_pop_estimate_2010)
+    separate(NAME, c("County"))
 
+
+#View(ny_pop_estimate_2010)
+
+
+## Change the names of counties
+ny_pop_estimate_2010[28,"County"] <- "St Lawrence"
+ny_pop_estimate_2010[14,"County"] <- "New York"
+
+
+#View(ny_pop_estimate_2010)
 
 ## join population 10 years estimation to main dataset
 vital_ny_2017 <- vital_ny_2017 %>%
     left_join(ny_pop_estimate_2010, by = "County")
-View(vital_ny_2017)
+#View(vital_ny_2017)
+```
 
+### 4. Cumulative number of opioid deaths between 2003-2017\ for calculate the prevalence of opioid-related deaths
+```{r , warning=FALSE, results = 'hide'}
 # Cummuative all opioid deaths between 2003-2017
 vital_overall <- spread(vital, Year, Opioid.Poisoning.Deaths)
 vital_overall <- vital_overall %>%
@@ -122,92 +157,162 @@ vital_overall <- vital_overall %>%
            vital_overall$`2014` +
           vital_overall$`2015` +
             vital_overall$`2016` +
-           vital_overall$`2017`) %>%
+           vital_overall$`2017`) 
 #vital_overall
+```
 
 
-## join overall number of opioid deaths between 2003-2017 estimation to main dataset
+### 5. Calculate and create new columns of the prevalences and death rates of opioid-related deaths 
+```{r , warning=FALSE, results = 'hide'}
 vital_ny_overall <- vital_ny_2017 %>%
-    left_join(vital_overall, by = "County")
+    left_join(vital_overall, by = "County") %>%
+    mutate(prevalence = (total/value)*100000) %>%
+    mutate(crude2017 = (Opioid.Poisoning.Deaths/pop)*100000)
 #View(vital_ny_overall)
 
-vital
+```
 
-## Census race data (2000-2010)
-# sociovars <- c(White = "P005003", 
-              #Black = "P005004", 
-              #Asian = "P005006", 
-              #Hispanic = "P004003",
-              #male = "P012001",
-              #female = "P0120026")
-
-#head(racevars)
-
+### 6. Prepare top 10 the highest prevalence and crude rate of opioid-related deaths
+```{r , warning=FALSE}
+## Prepare top 10 the highest prevalence of opioid-related deaths
+prev_top10 <- vital_ny_overall %>%
+  st_set_geometry(NULL) %>%
+  left_join(ny_area, by = "County") %>%
+  select(County, Regions, Areas, prevalence ) %>%
+  arrange(desc(prevalence))
 
 
 
+## Prepare top 10 the crude rates of opioid-related deaths
+crude_top10 <- vital_ny_overall %>%
+  st_set_geometry(NULL) %>%
+  left_join(ny_area, by = "County") %>%
+  select(County, Regions, Areas, crude2017) %>%
+  arrange(desc(crude2017))
 
 ```
 
-```{r echo=FALSE, fig.height=10, fig.width=8}
 
-## The prevalence rate of opiod deaths in new york
-
-
-## Crude rate of  opioid deaths in 2017
-
-
-
-
-```
-
-```{r fig.height=10, fig.width=8, include=FALSE}
+### 7. Create plot of Annual Number of Opioid Related Deaths in New York 2003-2017
+```{r , warning=FALSE}
+## Create plot of Annual Number of Opioid Related Deaths in New York 2003-2017
 g <- ggplot (data = vital) +
     geom_line(aes(x = Year,  y = Opioid.Poisoning.Deaths, group = County, col = County)) + 
     geom_point(aes(x = Year,  y = Opioid.Poisoning.Deaths, group = County, col = County, size = Opioid.Poisoning.Deaths)) +
-    geom_smooth(aes(x = Year,  y = Opioid.Poisoning.Deaths)) +
+    geom_smooth(aes(x = Year,  y = Opioid.Poisoning.Deaths), col = "black") +
     theme_bw() +
-    labs (title = "Annual Number of Opioid Related Deaths in New York 2003-2017", x = "Year", y= "Number of Opioid Related Deaths")
-g <- g + facet_wrap(~ County)
-g
+    theme(legend.title = element_blank())+
+    labs (title = "Annual Number of Opioid Related Deaths in New York 2003-2017", x = "Year", y= "Number of Opioid Related Deaths") 
 ```
 
 
+### 8. Prediction of Opioid Deaths using a random forest method
+```{r , warning=FALSE}
+predict_deaths <- vital_ny_overall %>%
+  left_join(ny_area, by = "County") %>%
+  select(prevalence, male, female, white, divorce, african, amindian, asian, hawaii, other, livealone, pop, total, crude2017, Regions, Areas) %>%
+ st_set_geometry(NULL)
+predict_deaths
 
-```{r, warning=FALSE, results = 'hide'}
-fit=lm(Opioid.Poisoning.Deaths ~ estimate, data = vital_ny_2017)
-summary(fit)
+train.idx <- sample(nrow(predict_deaths), 2/3 * nrow(predict_deaths))
+vital.train <- predict_deaths[train.idx, ]
+vital.test <- predict_deaths[-train.idx, ]
+rf_vital <- ranger(prevalence ~ ., data = vital.train, write.forest = TRUE)
+print(rf_vital)
+pred.vital <- predict(rf_vital, data = vital.test)
+
 ```
-
 
 # Results
 
-Show tables, plots, etc. and describe them.
 
-```{r echo=TRUE, fig.height=8, fig.width=6, warning=FALSE}
+<font size="3"> The number of opioid-related deaths dramatically increased in every county from 2003 to 2017. The plot illustrated that Suffolk County had the highest opioid-related deaths in New York State with 425 deaths in 2017. Kings County was more likely to have an increase in the number of opioid deaths over the last 5 years. In addition, a linear trend shows that opioid deaths generally increased  throughout New York State.</font> 
+
+## Figure 1. Trend of opioid-related deaths between 2003 - 2017 across New York State
+
+
+```{r , fig.height=8, fig.width=8, warning=FALSE}
 ggplotly (g, tooltip = c("County", "Opioid.Poisoning.Deaths", "Year")) 
 
-    
 ```
 
+<font size="3"> The interactive map shows the distrbution of  prevalence rates of opioid-realted deaths by county in New York State. Sullivan is the highest prevalence with 254 deaths per 100,000 residents and Greene is the second highest prevalence with 193 deaths per 100,000 residents. Schuyler is the lowest county of opioid poisioining deaths with 32 deaths per 100,000 residents (Figure 2, Table 1). </font>
+
+
+## Figure 2. Distribution Map of The Prevalence Rates\ of Opioid-Related Deaths per 100,000 residents
+```{r, warning=FALSE}
+mapviewOptions(legend.pos = "topright")
+mapviewOptions(leafletWidth = 800)
+
+mapview(vital_ny_overall, zcol = "prevalence", legend = TRUE, alpha = 0.5, layer.name = c("Prevalences of Opioid-related Deaths "))
+
+```
+
+## Table 1. Top 10 Counties of The Prevalence Rates\ of Opioid-Related Deaths per 100,000 population 
+```{r , warning=FALSE}
+datatable(prev_top10,
+          colnames = c('County', 'Region', 'Area', 'Prevalence Rate'), 
+          caption = 'Table 1: The Prevalence Rate of Opioid-Related'
+          ) %>%
+  formatRound('prevalence', digits = 2) %>%
+  formatStyle('prevalence',  color = '#c23b22', fontWeight = 'bold')
+
+```
+
+
+<font size="3"> In figure 3, the interactive map illustrates the distribution of opiod-related deaths across New York State in 2017. Lewis County had the highest death rate with about 49 deaths per 100,000 residents.  Sullivan had the second highest death rate with 38 deaths per 100,000 residents. Columbia had the third highest death rate with 31 deaths per 100,000 residents. Moreover, Hamiltion and Schuyler had no opioid-related deaths in 2017 (Figure 3, Table 2). </font>
+
+
+## Figure 3. Distribution Map of The Crude Rates\ of Opioid-Related Deaths per 100,000 residents in 2017
 ```{r echo=TRUE}
 mapviewOptions(legend.pos = "bottomright")
 mapviewOptions(leafletWidth = 800)
-mapview(vital_ny_2017, zcol = "Opioid.Poisoning.Deaths", legend = TRUE, alpha = 0.5)
+
+mapview(vital_ny_overall, zcol = "crude2017", legend = TRUE, alpha = 0.5, layer.name = c("Opioid Death Rates in 2017"))
+
 ```
 
-```{r echo=TRUE, warning=FALSE}
-ggplot(vital_ny_2017,aes(y=Opioid.Poisoning.Deaths,x=estimate)) + 
-      geom_point() +
-      geom_smooth(method="lm")
+## Table 2. Top 10 Counties of The Crude Rates\ of Opioid-Related Deaths per 100,000 residents in 2017
+```{r , warning=FALSE}
+datatable(crude_top10, 
+          colnames = c('County', 'Region', 'Area', 'Death Rates in 2017'), 
+          caption = 'Table 2: Death Rates of Opioid-Related in 2017'
+          ) %>%
+  formatRound('crude2017', digits = 2) %>%
+  formatStyle('crude2017',  color = '#c23b22', fontWeight = 'bold')
+ 
 ```
+
+<font size="3"> This plot shows the prediction of prevalence rates of opioid-related deaths in New York City. The project used 15 independent variables to predict prevalence rates including: male, female, divorce, white,  African American, American Indian, Asian, Hawaiian, other, live alone, population, overall number of opioid overdose deaths between 2003 - 2017, crude rates in 2017, regions, and areas of the county. The model shows that most prevalence rates that are less than 100 deaths per 100,000 for a population are more likely to increase. On the other hand, prevalence rates that are higher than a hundred deaths per 100,000 are more likely to decrease dramatically. When the prevalence rates are higher, the prediciton rates decline. </font>
+
+## Figure 4.Prediction of Opioid-Related Death Prevalence\ in New York Using Random Forest
 
 ```{r echo=TRUE}
-ggPredict(fit,se=TRUE,interactive=TRUE)
+
+# plot(x = vital.test$prevalence, y = pred.vital$predictions)
+# table(x = vital.test$prevalence, y = pred.vital$predictions)
+gpredict <- ggplot() +  
+  geom_point(aes(vital.test$prevalence, y = pred.vital$predictions), col = "red")  +
+  theme_bw() +
+  geom_abline() +
+  labs(title = "Prediction of Opioid-Related Death Prevalence in New York", x = "Prevalence of Opioid-related Deaths (Test)", y = "Prediction of Opioid-related Deaths")
+ggplotly(gpredict)
+
 ```
 
+
 # Conclusions
-I learned how to prepare data, create plots for final porject.
+Opioid-related deaths tend to increase every year across New York State. The study found that opioid deaths increased in almost all counties. The highest death rates were identified in the Central and Eastern New York regions. Schuyler County and Hamilton County had the lowest death rates among all counties. Additionally, rural areas had a higher risk of opioid-related death compared to urban areas. Health professionals should focus on these regions to prevent and control the opioid crisis in these areas. 
 
 
 # References
+
+Ballantyne JC. Opioids and Other Analgesics. In: Verster JC, Brady K, Galanter M, Conrod P, eds. Drug Abuse and Addiction in Medical Illness: Causes, Consequences and Treatment. New York, NY: Springer New York, 2012:241-50.
+
+Office of Quality and Patient Safety. (2019). Vital Statistics: Opioid-Related Deaths by County: Beginning 2003. Vital Statistics. Retrieved from https://health.data.ny.gov/Health/Vital-Statistics-Opioid-Related-Deaths-by-County-B/sn5m-dv52
+
+Stopka, T. J., Amaravadi, H., Kaplan, A. R., Hoh, R., Bernson, D., Chui, K. K. H., . . . Rose, A. J. (2019). Opioid overdose deaths and potentially inappropriate opioid prescribing practices (PIP): A spatial epidemiological study. International Journal of Drug Policy, 68, 37-45. doi:https://doi.org/10.1016/j.drugpo.2019.03.024
+
+United State Census Bureau. (2019). American Community Survey (ACS). Retrieved from https://www.census.gov/programs-surveys/acs
+
+U.S. Census Bureau. (2010). Decennial Census Datasets. Retrieved from https://www.census.gov/programs-surveys/decennial-census/decade.2010.html
