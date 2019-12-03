@@ -211,7 +211,7 @@ predict_deaths <- vital_ny_overall %>%
   left_join(ny_area, by = "County") %>%
   select(prevalence, male, female, white, divorce, african, amindian, asian, hawaii, other, livealone, pop, total, crude2017, Regions, Areas) %>%
  st_set_geometry(NULL)
-predict_deaths
+
 
 train.idx <- sample(nrow(predict_deaths), 2/3 * nrow(predict_deaths))
 vital.train <- predict_deaths[train.idx, ]
