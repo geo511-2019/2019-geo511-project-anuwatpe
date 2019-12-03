@@ -34,6 +34,7 @@ library(ranger)
 library(ggplot2)
 
 knitr::opts_chunk$set(cache=TRUE)  # cache the results for quick compiling
+unlink('index_cache', recursive = TRUE)
 
 ```
 
