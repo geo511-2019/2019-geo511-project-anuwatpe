@@ -34,7 +34,6 @@ library(ranger)
 library(ggplot2)
 
 knitr::opts_chunk$set(cache=TRUE)  # cache the results for quick compiling
-unlink('index_cache', recursive = TRUE)
 
 ```
 
@@ -45,7 +44,6 @@ unlink('index_cache', recursive = TRUE)
 ```{r wrangling data, warning=FALSE, results = 'hide'}
 
 vital <- read.csv('data/vital.csv') 
-vital
 ny_area <- read.csv('data/area.csv')
 v17 <- load_variables(2017, "acs5", cache = TRUE)
 ny_area
