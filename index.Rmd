@@ -5,6 +5,7 @@ subtitle: Spatial Epidemiological Analysis and Prediction of Opioid-Related Deat
   in New York State
 output:
   html_document:
+    code_folding: hide
     df_print: paged
 ---
 
@@ -46,7 +47,7 @@ knitr::opts_chunk$set(cache=TRUE)  # cache the results for quick compiling
 vital <- read.csv('data/vital.csv') 
 ny_area <- read.csv('data/area.csv')
 v17 <- load_variables(2017, "acs5", cache = TRUE)
-ny_area
+#ny_area
 #View(v17)
 ```
 
@@ -230,7 +231,7 @@ pred.vital <- predict(rf_vital, data = vital.test)
 ## Figure 1. Trend of opioid-related deaths between 2003 - 2017 across New York State
 
 
-```{r , fig.height=8, fig.width=8, warning=FALSE}
+```{r , fig.height=6, fig.width=8, warning=FALSE}
 ggplotly (g, tooltip = c("County", "Opioid.Poisoning.Deaths", "Year")) 
 
 ```
